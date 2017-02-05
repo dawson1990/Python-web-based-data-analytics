@@ -12,10 +12,9 @@
             <th>Frequency</th>
             <th>Associations</th>
         </tr>
-
+ {% for key, value in freq.items() %}
         {% for k, v in associations.items() %}
-            {% for key, value in freq.items() %}
-                {% if key == k %}
+                {% if k == key %}
                   <tr>
                       <td style="border: solid black 1px">{{ key}}</td>
                       <td style="border: solid black 1px">{{ value }}</td>

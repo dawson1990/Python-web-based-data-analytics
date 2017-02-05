@@ -4,9 +4,7 @@ import basic_analysis
 import adv_analysis
 import os
 import pymongo
-import collections
-import operator
-import pprint
+import data_utils
 
 UPLOAD_FOLDER = 'C:/Users/Kevin/Google Drive/college/Year4/Web Dev/data analysis assignment/uploads'
 
@@ -49,85 +47,40 @@ def upload_file():
                 options = request.form['options']
                 text_digest = adv_analysis.advanced(file,options)
                 associations = c.find_one({'docID': text_digest})
-                assoc = processAssoc(associations)
+                assoc = data_utils.processAssoc(associations)
                 wordFreq = fq.find_one({'docID': text_digest})
-                freq = processFreq(wordFreq)
+                freq = data_utils.processFreq(wordFreq)
                 nf = nf.find_one({'docID': text_digest})
-                notfound = processNotFound(nf)
+                notfound = data_utils.processNotFound(nf)
                 r = rk.find_one({'docID': text_digest})
-                rank = r.get('elements',{}) #processRank(r)
-                combinedDict = combine(assoc, freq, notfound, rank)
+                rank = r.get('elements',{})
+                combinedDict = data_utils.combine(assoc, freq, rank)
                 return render_template('adv_upload.html', combined=combinedDict.values(), ranks=rank, freq=freq,
                                        filename=filename,
                                        notfound=notfound)
-                # return render_template('adv_upload.html', filename=filename, associations=assoc, freq=freq,
-                #                        notfound=notfound, ranks=rank)
             else:
                 text_digest = basic_analysis.basic(file)
                 associations = c.find_one({'docID': text_digest})
-                assoc = processAssoc(associations)
+                assoc = data_utils.processAssoc(associations)
                 wordFreq = fq.find_one({'docID': text_digest})
-                freq = processFreq(wordFreq)
+                freq = data_utils.processFreq(wordFreq)
                 nf = nf.find_one({'docID': text_digest})
-                notfound = processNotFound(nf)
+                notfound = data_utils.processNotFound(nf)
                 r = rk.find_one({'docID': text_digest})
                 if r is None:
                     return render_template('upload.html', filename=filename, associations=assoc, freq=freq,
                                            notfound=notfound)
                 else:
-                    rank = processRank(r)
-                    combinedDict = combine(assoc, freq, notfound, rank)
+                    rank = data_utils.processRank(r)
+                    combinedDict = data_utils.combine(assoc, freq, rank)
                     return render_template('adv_upload.html', combined=combinedDict.values(), ranks=rank, freq=freq, filename=filename,
                                            notfound=notfound)
-                    # return render_template('adv_upload.html', combined=combinedDict, filename=filename, associations=assoc, freq=freq,
-                    #                        notfound=notfound, ranks=rank)
         else:
             return render_template('upload.html', filename='did not work')
 
 
 
-def processRank(rank):
-    ranks = {}
-    final = {}
-    r = {}
-    oDict = collections.OrderedDict()
-    temp = rank
-    ranks = temp.get('elements',{})
-    for element in ranks:
-        oDict[element[0]] = element[1]
-    for k,v in oDict.items():
-        r[v] = k
-    final = sorted(r.items(), reverse = True)
-    return final
 
-def processNotFound(nf:dict):
-    return nf.get('elements', {})
-
-
-def processAssoc(associations:dict):
-    temp = {}
-    temp = associations.get('elements',{})
-    return temp
-
-def processFreq(wordFreq:dict):
-    return wordFreq.get('elements',{})
-
-
-def combine(assoc:dict , freq:dict, notfound:dict, rank:list):
-    temp = {}
-    for key, value in assoc.items():
-        for k,v in freq.items():
-            if key == k:
-                for element in rank:
-                    if element[0] == key:
-                        temp[key] = {'word': key,'associations': value, 'frequency': v, 'rank': element[1]}
-                # for elem in element:
-                    #     if elem == key and key == k:
-                    #      temp[key] = {'rank': elem, 'word' : key, 'associations': value, 'frequency': v}
-                     # temp[key] = {'word': key,'associations': value, 'frequency': v, 'rank': element[0]}
-    print('COMBINED\n', 'length', len(temp), '\n')
-    pprint.pprint(temp)
-    return temp
 
 
 
