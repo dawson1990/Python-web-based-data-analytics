@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block body %}
+<div>
+    <h1>Data Analytics Assignment</h1>
+    <p>
+        Steps: <br/>
+        1. Select a txt file to upload<br/>
+        2. Select type of analysis: <br/>
+        &nbsp;For Basic click Submit <br/>
+        &nbsp;For Advanced: <br/>
+        &nbsp;&nbsp;Check the box <br/>
+        &nbsp;&nbsp;Select the association you want to use as rank multiplier, between 1 and 3<br/>
+        &nbsp;&nbsp;click Submit
+    </p>
+    <p>
+        <h5>Notes</h5><br/>
+    If a file has already been uploaded before, its results will be displayed.<br/>
+    This can be either basic or advanced version.
+    </p>
+</div>
+<div style="border: solid white 1px;">
+    <form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data" >
+    <input type="file" name="file" /><br/><br/>
+        <div style="border: solid white 1px;">
+             <label for="advanced">Advanced</label>
+            <input  type="checkbox" name="advanced"  id="advanced"> <br/><br/>
+            <label>Association:</label><br/>
+            <input type="radio" name="options" id="one" value="0" checked> <label for="one">1st</label>
+            <input type="radio" name="options" id="two" value="1"><label for="two">2nd</label>
+            <input type="radio" name="options" id="three" value="2"> <label for="three">3rd</label>
+        </div>
+
+
+    <input type="submit" name="subBtn" value="Submit"/>
+</form>
+</div>
+
+
+{% endblock %}

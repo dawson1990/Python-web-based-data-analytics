@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block body %}
+<h1 style="text-align: center">{{ filename }} </h1>
+    <ul>
+        {% for message in get_flashed_messages() %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    <table style="width: 100%; border: solid black 1px;">
+        <tr>
+            <th>Word</th>
+            <th>Frequency</th>
+            <th>Associations</th>
+        </tr>
+
+        {% for k, v in associations.items() %}
+            {% for key, value in freq.items() %}
+                {% if key == k %}
+                  <tr>
+                      <td style="border: solid black 1px">{{ key}}</td>
+                      <td style="border: solid black 1px">{{ value }}</td>
+                      <td style="border: solid black 1px">{{ v }}</td>
+                  </tr>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </table>
+<br/>
+ <table style="width: 100%; border: solid black 1px;">
+        <tr>
+            <th>Word</th>
+            <th>Frequency</th>
+            <th>Status</th>
+        </tr>
+            {% for key, value in freq.items() %}
+                {% for k, v in notfound.items() %}
+                    {% if k == key %}
+                      <tr>
+                          <td style="border: solid black 1px">{{ k}}</td>
+                          <td style="border: solid black 1px">{{ value }}</td>
+                          <td style="border: solid black 1px">{{ v }}</td>
+                      </tr>
+                    {% endif %}
+                {% endfor %}
+        {% endfor %}
+    </table>
+
+{% endblock %}
