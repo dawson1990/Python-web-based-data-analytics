@@ -57,3 +57,19 @@ def cleanValues(value: list):
             newKey = k.translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
             element[newKey] = element.pop(k)
     return value
+
+
+def getRank(options, assoc, freq):
+    rank = {}
+    associationvalue = 0
+    for k1, v1 in freq.items():
+        for k2, v2 in assoc.items():
+            if k1 == k2:
+                occfreq = freq[k2]
+                item = assoc[k2][int(options)]
+                for k, v in item.items():
+                    associationvalue = v
+                rank[k2] = int(associationvalue) * int(occfreq)
+    tupleList = [(k, v) for k, v in rank.items()]
+    sortedRank = sorted(tupleList, key=lambda x: x[1], reverse=True)
+    return sortedRank

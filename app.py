@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect
+from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 import basic_analysis
 import adv_analysis
@@ -63,6 +63,13 @@ def upload_file():
                 basic = text_digest['basic']
                 adv = text_digest['adv']
                 if basic is True and adv is True:
+                    options = request.form['options']
+                    associations = c.find_one({'docID': digest})
+                    assoc = data_utils.processAssoc(associations)
+                    wordFreq = fq.find_one({'docID': digest})
+                    freq = data_utils.processFreq(wordFreq)
+                    sortedRank = data_utils.getRank( options, assoc, freq)
+                    mongo.updateRank(digest, sortedRank)
                     return mongo.findAndDisplay(digest, file.filename)
                 elif basic is True and adv is False or basic is False and adv is False:
                     if checked:
@@ -74,11 +81,11 @@ def upload_file():
                         freq = data_utils.processFreq(wordFreq)
                         nf = nf.find_one({'docID': digest})
                         notfound = data_utils.processNotFound(nf)
-                        r = rk.find_one({'docID': digest})
-                        rank = r.get('elements',{})
-                        combinedDict = data_utils.combine(assoc, freq, rank)
+                        sortedRank = data_utils.getRank( options, assoc, freq)
+                        combinedDict = data_utils.combine(assoc, freq, sortedRank)
+                        mongo.updateRank(digest, sortedRank)
                         return render_template('adv_upload.html',heading='Result', combined=combinedDict.values(),
-                                               ranks=rank, freq=freq,
+                                               ranks=sortedRank, freq=freq,
                                                filename=filename,
                                                notfound=notfound)
                     else:
