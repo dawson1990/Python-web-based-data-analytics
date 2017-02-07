@@ -1,23 +1,19 @@
 {% extends "base.html" %}
 {% block body %}
-<h1 style="text-align: center">{{ filename }} </h1>
-    <ul>
-        {% for message in get_flashed_messages() %}
-            <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
+<h1 style="text-align: center">{{ heading }} : {{ filename }} </h1>
+<h3><a href="http://localhost:5000/"><button>Home</button></a> </h3>
     <table style="width: 100%; border: solid black 1px;">
         <tr>
             <th>Word</th>
             <th>Frequency</th>
             <th>Associations</th>
         </tr>
- {% for key, value in freq.items() %}
+ {% for element in freq %}
         {% for k, v in associations.items() %}
-                {% if k == key %}
+                {% if k == element[0] %}
                   <tr>
-                      <td style="border: solid black 1px">{{ key}}</td>
-                      <td style="border: solid black 1px">{{ value }}</td>
+                      <td style="border: solid black 1px">{{ k }}</td>
+                      <td style="border: solid black 1px">{{ element[1] }}</td>
                       <td style="border: solid black 1px">{{ v }}</td>
                   </tr>
                 {% endif %}
@@ -25,18 +21,20 @@
         {% endfor %}
     </table>
 <br/>
+<h1 style="text-align: center">Not Found</h1>
+
  <table style="width: 100%; border: solid black 1px;">
         <tr>
             <th>Word</th>
             <th>Frequency</th>
             <th>Status</th>
         </tr>
-            {% for key, value in freq.items() %}
+            {% for element in freq %}
                 {% for k, v in notfound.items() %}
-                    {% if k == key %}
+                    {% if k == element[0] %}
                       <tr>
                           <td style="border: solid black 1px">{{ k}}</td>
-                          <td style="border: solid black 1px">{{ value }}</td>
+                          <td style="border: solid black 1px">{{ element[1] }}</td>
                           <td style="border: solid black 1px">{{ v }}</td>
                       </tr>
                     {% endif %}

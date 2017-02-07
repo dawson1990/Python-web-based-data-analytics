@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
-<h1 style="text-align: center">{{ filename }} - Advanced </h1>
+<h1 style="text-align: center">{{ heading }} : {{ filename }} - Advanced </h1>
+<h3><a href="http://localhost:5000/"><button>Home</button></a> </h3>
   <table style="width: 100%; border: solid black 1px;">
         <tr>
             <th>Word</th>
@@ -41,5 +42,5 @@
                 {% endfor %}
         {% endfor %}
     </table>
-<input type="button" value="Start Again" >
+
 {% endblock %}

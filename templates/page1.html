@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-<div>
-    <h1>Data Analytics Assignment</h1>
-    <p>
+<div style="text-align: center">
+    <h1 style="text-align: center">Data Analytics Assignment</h1>
+    <p style="text-align: center;">
         Steps: <br/>
         1. Select a txt file to upload<br/>
         2. Select type of analysis: <br/>
@@ -14,13 +14,12 @@
     </p>
     <p>
         <h5>Notes</h5><br/>
-    If a file has already been uploaded before, its results will be displayed.<br/>
-    This can be either basic or advanced version.
+        If a file was previously uploaded, it will be retrieved and page title will be 'Previous Results'
     </p>
 </div>
 <div style="border: solid white 1px;">
     <form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data" >
-    <input type="file" name="file" /><br/><br/>
+    <input type="file" name="file" required="required" accept="text/plain"/><br/><br/>
         <div style="border: solid white 1px;">
              <label for="advanced">Advanced</label>
             <input  type="checkbox" name="advanced"  id="advanced"> <br/><br/>
@@ -29,11 +28,8 @@
             <input type="radio" name="options" id="two" value="1"><label for="two">2nd</label>
             <input type="radio" name="options" id="three" value="2"> <label for="three">3rd</label>
         </div>
-
-
     <input type="submit" name="subBtn" value="Submit"/>
 </form>
 </div>
-
 
 {% endblock %}
