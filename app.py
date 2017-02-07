@@ -56,8 +56,9 @@ def upload_file():
                 for line in s.readlines():
                     # using both nltk to tokenize word and using string to translate punctuation into a space
                     tokens += nltk.word_tokenize(
-                                    line.translate(str.maketrans(string.punctuation, ' ' * len(string.punctuation))))
+                                    line.lower().translate(str.maketrans(string.punctuation, ' ' * len(string.punctuation))))
                     text += line.lower().translate(str.maketrans(string.punctuation, ' ' * len(string.punctuation)))
+                print(text)
                 text_digest = mongo.checkIfExists(text)
                 digest = text_digest['key']
                 basic = text_digest['basic']
@@ -74,7 +75,7 @@ def upload_file():
                 elif basic is True and adv is False or basic is False and adv is False:
                     if checked:
                         options = request.form['options']
-                        adv_analysis.advanced(options,norms,tokens, digest)
+                        adv_analysis.advanced(norms,tokens, digest)
                         associations = c.find_one({'docID': digest})
                         assoc = data_utils.processAssoc(associations)
                         wordFreq = fq.find_one({'docID': digest})
