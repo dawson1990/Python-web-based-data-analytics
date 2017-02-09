@@ -1,7 +1,5 @@
 import pymongo
 import hashlib
-from flask import render_template, request
-import data_utils
 
 
 def checkIfExists(text: str):
@@ -22,40 +20,6 @@ def checkIfExists(text: str):
         return {'key': digest, 'basic': basic, 'adv': adv}
     else:
         return {'key': digest, 'basic': basic, 'adv': adv}
-
-
-def findAndDisplay(digest,fname):
-    assoc= {}
-    freq = {}
-    nf = {}
-    r = {}
-    options = request.form['options']
-    client = pymongo.MongoClient()
-    db = client['dataAnalyticsDB']
-    c = db['result']
-    nf = db['notfound']
-    rk = db['ranked']
-    fq = db['word_freq']
-    associations = c.find_one({'docID': digest})
-    assoc = data_utils.processAssoc(associations)
-    wordFreq = fq.find_one({'docID': digest})
-    freq = data_utils.processFreq(wordFreq)
-    sortedFreq = data_utils.sortFreq(freq)
-    nf = nf.find_one({'docID': digest})
-    notfound = data_utils.processNotFound(nf)
-    data_utils.getRank(options,assoc,freq)
-    r = rk.find_one({'docID': digest})
-    if r is None:
-        return render_template('upload.html', heading='Previous Result', filename=fname, associations=assoc,
-                               freq=sortedFreq,
-                               notfound=notfound)
-    else:
-        rank = r.get('elements', {})
-        combinedDict = data_utils.combine(assoc, freq, rank)
-        return render_template('adv_upload.html', heading='Previous Result', combined=combinedDict.values(), ranks=rank,
-                               freq=freq,
-                               filename=fname,
-                               notfound=notfound)
 
 
 def insert(result: dict, notFound, freq_count, digest):
@@ -91,7 +55,6 @@ def adv_insert(result: dict, notFound: dict,freq_count, digest):
     rk = db['ranked']
     fq = db['word_freq']
     dbWordFreq = {'docID':digest,'elements': freq_count}
-    # dbRankDict = {'docID': digest, 'elements': rank}
     dbFoundDict = {'docID': digest, 'elements': result}
     dbNotFoundDict = {'docID': digest, 'elements': notFound}
     try:

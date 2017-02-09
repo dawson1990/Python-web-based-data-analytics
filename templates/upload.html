@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
-<h1 style="text-align: center">{{ heading }} : {{ filename }} </h1>
+<h1 style="text-align: center"><a name="top">{{ heading }} : {{ filename }} ({{basicamount}})</a> </h1>
 <h3><a href="http://localhost:5000/"><button>Home</button></a> </h3>
+<h3><a href="#notfound"><button>Not Found</button></a> </h3>
+
     <table style="width: 100%; border: solid black 1px;">
         <tr>
             <th>Word</th>
@@ -21,7 +23,8 @@
         {% endfor %}
     </table>
 <br/>
-<h1 style="text-align: center">Not Found</h1>
+<h1 style="text-align: center" ><a name="notfound">Not Found ({{nfamount}})</a></h1>
+<h3><a href="#top"><button>Back to Top</button></a> </h3>
 
  <table style="width: 100%; border: solid black 1px;">
         <tr>

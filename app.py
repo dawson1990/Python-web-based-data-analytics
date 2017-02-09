@@ -56,9 +56,9 @@ def upload_file():
                 for line in s.readlines():
                     # using both nltk to tokenize word and using string to translate punctuation into a space
                     tokens += nltk.word_tokenize(
-                                    line.lower().translate(str.maketrans(string.punctuation, ' ' * len(string.punctuation))))
+                                    line.lower().translate(str.maketrans(string.punctuation, ' ' *
+                                                                         len(string.punctuation))))
                     text += line.lower().translate(str.maketrans(string.punctuation, ' ' * len(string.punctuation)))
-                print(text)
                 text_digest = mongo.checkIfExists(text)
                 digest = text_digest['key']
                 basic = text_digest['basic']
@@ -69,9 +69,29 @@ def upload_file():
                     assoc = data_utils.processAssoc(associations)
                     wordFreq = fq.find_one({'docID': digest})
                     freq = data_utils.processFreq(wordFreq)
-                    sortedRank = data_utils.getRank( options, assoc, freq)
+                    sortedFreq = data_utils.sortFreq(freq)
+                    nf = nf.find_one({'docID': digest})
+                    notfound = data_utils.processNotFound(nf)
+                    data_utils.getRank(options, assoc, freq)
+                    r = rk.find_one({'docID': digest})
+                    rank = r.get('elements', {})
+                    combinedDict = data_utils.combine(assoc, freq, rank)
+                    sortedRank = data_utils.getRank(options, assoc, freq)
                     mongo.updateRank(digest, sortedRank)
-                    return mongo.findAndDisplay(digest, file.filename)
+                    if checked:
+                        return render_template('adv_upload.html', heading='Retrieved Result',
+                                               combined=combinedDict.values(), ranks=sortedRank,
+                                               freq=freq,
+                                               advamount=len(combinedDict),
+                                               nfamount=len(notfound),
+                                               filename=filename,
+                                               notfound=notfound)
+                    else:
+                        return render_template('upload.html', heading='Retrieved Result', filename=filename,
+                                               nfamount=len(notfound),
+                                               basicamount=len(assoc),
+                                               associations=assoc, freq=sortedFreq,
+                                               notfound=notfound)
                 elif basic is True and adv is False or basic is False and adv is False:
                     if checked:
                         options = request.form['options']
@@ -87,6 +107,8 @@ def upload_file():
                         mongo.updateRank(digest, sortedRank)
                         return render_template('adv_upload.html',heading='Result', combined=combinedDict.values(),
                                                ranks=sortedRank, freq=freq,
+                                               advamount=len(combinedDict),
+                                               nfamount=len(notfound),
                                                filename=filename,
                                                notfound=notfound)
                     else:
@@ -105,12 +127,16 @@ def upload_file():
                             if r is None:
                                 return render_template('upload.html', heading='Result', filename=filename,
                                                        associations=assoc, freq=sortedFreq,
+                                                       nfamount=len(notfound),
+                                                       basicamount=len(assoc),
                                                        notfound=notfound)
                             else:
                                 rank = data_utils.processRank(r)
                                 combinedDict = data_utils.combine(assoc, freq, rank)
                                 return render_template('adv_upload.html', heading='Result',
                                                        combined=combinedDict.values(), ranks=rank, freq=freq,
+                                                       advamount=len(combinedDict),
+                                                       nfamount=len(notfound),
                                                        filename=filename,
                                                        notfound=notfound)
         else:

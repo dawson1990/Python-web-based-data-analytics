@@ -2,8 +2,7 @@ import mongo
 import data_utils
 
 
-def basic( norms, tokens, digest):
-    # tokens = []
+def basic(norms, tokens, digest):
     freq_count = {}
     notFound = {}
     result = {}
